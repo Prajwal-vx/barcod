@@ -1,2 +1,13 @@
 /code128_ITEM-4774-WPE.png
 /code128_output.png
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+venv/
