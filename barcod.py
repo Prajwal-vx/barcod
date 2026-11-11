@@ -1,6 +1,7 @@
-import random
+import secrets
 import string
 from pathlib import Path
+from typing import Final
 
 try:
     import barcode
@@ -12,17 +13,23 @@ except ImportError:
     raise SystemExit(1)
 
 
-OUTPUT_DIR = Path("generated_barcodes")
-OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR: Final[Path] = Path(__file__).resolve().parent / "generated_barcodes"
 
 
-def generate_random_code(length=12):
+def generate_random_code(length: int = 12) -> str:
     """Generate a random numeric barcode value."""
-    return "".join(random.choices(string.digits, k=length))
+    if length <= 0:
+        raise ValueError("Barcode length must be greater than zero.")
+
+    return "".join(secrets.choice(string.digits) for _ in range(length))
 
 
-def create_barcode(value):
+def create_barcode(value: str) -> Path:
     """Create and save a Code 128 barcode as a PNG."""
+    if not value:
+        raise ValueError("Barcode value must not be empty.")
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     filename = OUTPUT_DIR / f"barcode_{value}"
 
     code128 = barcode.get(
@@ -45,9 +52,7 @@ def create_barcode(value):
     return Path(saved_path)
 
 
-def main():
-    # No user input required.
-    # A new random barcode is generated automatically every time the program runs.
+def main() -> None:
     value = generate_random_code(12)
     path = create_barcode(value)
 
